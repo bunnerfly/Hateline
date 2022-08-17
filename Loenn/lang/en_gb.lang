@@ -1,0 +1,9 @@
+mods.Hateline.name=Hateline
+
+# -- Triggers --
+
+# Hat Visibility Trigger
+triggers.Hateline/HatVisibilityTrigger.placements.name.hatVisibilityOff=Hat Visibility Trigger (Disabled)
+triggers.Hateline/HatVisibilityTrigger.placements.name.hatVisibilityOn=Hat Visibility Trigger (Enabled)
+triggers.Hateline/HatVisibilityTrigger.attributes.description.hide=Whether or not to hide the player's current hat
+triggers.Hateline/HatVisibilityTrigger.attributes.description.persistent=Whether or not to persist past the trigger
