@@ -353,6 +353,6 @@ MigrationBackup/
 .idea
 
 # Testing and Unfinished Stuff
-.Loenn/
-.Maps/
-.bin/
+Loenn/
+Maps/
+bin/
