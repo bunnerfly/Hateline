@@ -1,5 +1,5 @@
-﻿
-#region Unused
+﻿#region Unused
+/*
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,4 +46,5 @@ namespace Celeste.Mod.Hateline.Triggers
         }
     }
 }
+*/
 #endregion

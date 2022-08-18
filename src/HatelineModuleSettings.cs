@@ -3,9 +3,7 @@ namespace Celeste.Mod.Hateline
 	[SettingName("Hateline Settings")]
 	public class HatelineModuleSettings : EverestModuleSettings
 	{
-		public bool AllowMapChanges { get; set; } = true;
-
-		public bool Enabled { get; set; } = false;
+		public bool Enabled { get; set; } = true;
 
 		[SettingRange(-100, 100, false)]
 		public int CrownX { get; set; } = 0;

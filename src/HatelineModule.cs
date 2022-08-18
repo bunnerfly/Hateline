@@ -19,8 +19,6 @@ namespace Celeste.Mod.Hateline {
 
         public SpriteBank SpriteBank;
 
-        private static Sprite crownSprite;
-
         public static List<string> hats = new List<string>();
 
         public static HatelineSettingsUI UI;
@@ -28,8 +26,6 @@ namespace Celeste.Mod.Hateline {
         public static string currentHat = "none";
 
         public static readonly string DEFAULT = "none";
-
-		public static bool hatAlive = false;
 
 		public HatelineModule() 
 		{
@@ -42,7 +38,6 @@ namespace Celeste.Mod.Hateline {
 			typeof(GravityHelperImports).ModInterop();
 
 			On.Celeste.Player.Added += hookPlayerAdded;
-			Everest.Content.OnUpdate += hookContentUpdate;
 			On.Celeste.GameLoader.LoadThread += LateLoader;
 
 			currentHat = Settings.SelectedHat;
@@ -58,11 +53,7 @@ namespace Celeste.Mod.Hateline {
 		private void hookPlayerAdded(On.Celeste.Player.orig_Added orig, Player self, Scene scene)
 		{
 			orig.Invoke(self, scene);
-			if (Settings.Enabled)
-			{
-				self.Add(new HatComponent(currentHat, Settings.CrownX, Settings.CrownY));
-				hatAlive = true;
-			}
+			self.Add(new HatComponent(currentHat, Settings.CrownX, Settings.CrownY));
 		}
 
 		public override void CreateModMenuSection(TextMenu menu, bool inGame, EventInstance snapshot)
@@ -76,19 +67,9 @@ namespace Celeste.Mod.Hateline {
 			orig(self);
 		}
 
-		private void hookContentUpdate(ModAsset oldA, ModAsset newA)
-		{
-			if (Settings.Enabled && crownSprite != null)
-			{
-				crownSprite.RemoveSelf();
-				crownSprite = null;
-			}
-		}
-
 		public override void Unload() 
 		{
 			On.Celeste.Player.Added -= hookPlayerAdded;
-			Everest.Content.OnUpdate -= hookContentUpdate;
 			On.Celeste.GameLoader.LoadThread -= LateLoader;
 
 			if (Everest.Modules.Any(m => m.Metadata.Name == "CelesteNet.Client"))

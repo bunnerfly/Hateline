@@ -17,14 +17,14 @@ namespace Celeste.Mod.Hateline
 		// protected virtual Facings PlayerFacing => (Entity as Player)?.Facing ?? Facings.Left;
 
 		public HatComponent(string hatSprite, int crownX, int crownY) : base(null, null)
-        {
+		{
 			try
-            {
+			{
 				GFX.SpriteBank.CreateOn(this, "hateline_" + hatSprite);
 				crownSprite = hatSprite;
 			}
 			catch
-            {
+			{
 				GFX.SpriteBank.CreateOn(this, "hateline_none");
 			}
 			Position = new Vector2(0f, -13f);
@@ -32,6 +32,15 @@ namespace Celeste.Mod.Hateline
         public override void Update()
         {
 			base.Update();
+
+			if (!HatelineModule.Settings.Enabled)
+            {
+				Visible = false;
+            }
+			else
+            {
+				Visible = true;
+			}
 
 			var hair = Entity.Get<PlayerHair>();
 			var sprite = Entity.Get<PlayerSprite>();
@@ -64,7 +73,7 @@ namespace Celeste.Mod.Hateline
 		// test
 		public static void ReloadHat(string hat, bool inGame)
 		{
-			if (inGame)
+			if (inGame && HatelineModule.Settings.Enabled)
             {
 				Sprite playerHatComponent = (Sprite)Engine.Scene.Tracker.GetComponents<HatComponent>().FirstOrDefault(c => c.Entity is Player);
 				Player player = Engine.Scene.Tracker.GetEntity<Player>();
