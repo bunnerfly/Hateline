@@ -83,15 +83,6 @@ namespace Celeste.Mod.Hateline {
 				crownSprite.RemoveSelf();
 				crownSprite = null;
 			}
-
-			//foreach (KeyValuePair<string, SpriteData> kvp in GFX.SpriteBank.SpriteData)
-			//{
-			//	if (!kvp.Key.StartsWith("hateline_"))
-			//	{
-			//		continue;
-			//	}
-			//	hats.Add(kvp.Key.Replace("hateline_", ""));
-			//}
 		}
 
 		public override void Unload() 
