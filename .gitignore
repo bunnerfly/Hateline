@@ -352,3 +352,7 @@ MigrationBackup/
 # JetBrains Rider
 .idea
 
+# Testing and Unfinished Stuff
+.Loenn/
+.Maps/
+.bin/
