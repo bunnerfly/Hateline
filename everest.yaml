@@ -1,6 +1,6 @@
- - Name: Hateline
+- Name: Hateline
   Version: 0.1.0
-  DLL: bin/Debug/net452/Hateline.dll
+  DLL: src/bin/Hateline.dll
   Dependencies:
     - Name: Everest
       Version: 1.2781.0
