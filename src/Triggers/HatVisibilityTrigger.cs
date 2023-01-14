@@ -1,6 +1,4 @@
-﻿#region Unused
-/*
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,17 +9,20 @@ using Celeste.Mod.Entities;
 
 namespace Celeste.Mod.Hateline.Triggers
 {
-    [CustomEntity("Hateline/HatVisibilityTrigger")]
-    public class HatVisibilityTrigger : Trigger
+    [CustomEntity("Hateline/HatForceTrigger")]
+    public class HatForceTrigger : Trigger
     {
-        private bool persistent = true;
+        public string hat;
 
-        private bool hide = true;
+        public int hatX;
+        public int hatY;
 
-        public HatVisibilityTrigger(EntityData data, Vector2 offset) : base(data, offset)
+        public HatForceTrigger(EntityData data, Vector2 offset)
+            : base(data, offset)
         {
-            persistent = data.Bool("true");
-            hide = data.Bool("true");
+            hat = data.Attr("hat", "flower");
+            hatX = data.Int("hatX", 0);
+            hatY = data.Int("hatY", -8);
         }
 
         public override void OnEnter(Player player)
@@ -31,20 +32,15 @@ namespace Celeste.Mod.Hateline.Triggers
             if (HatelineModule.Settings.AllowMapChanges &&
                 HatelineModule.Settings.Enabled)
             {
-                player.Components.Get<HatComponent>().Visible = !hide;
+                HatelineModule.Session.MapForcedHat = hat;
+
+                HatComponent.ReloadHat(HatelineModule.currentHat, true, hatX, hatY);
             }
         }
 
         public override void OnLeave(Player player)
         {
             base.OnEnter(player);
-
-            if (!persistent)
-            {
-                player.Components.Get<HatComponent>().Visible = hide;
-            }
         }
     }
 }
-*/
-#endregion

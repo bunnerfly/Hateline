@@ -5,6 +5,8 @@ namespace Celeste.Mod.Hateline
 	{
 		public bool Enabled { get; set; } = true;
 
+		public bool AllowMapChanges { get; set; } = true;
+
 		[SettingRange(-100, 100, false)]
 		public int CrownX { get; set; } = 0;
 

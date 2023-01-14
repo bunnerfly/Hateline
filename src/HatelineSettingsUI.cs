@@ -48,7 +48,7 @@ namespace Celeste.Mod.Hateline
 				hatSelectionMenu.Add(name, hat, selected);
 			}
 
-			hatSelectionMenu.Change(SelectedHat => HatComponent.ReloadHat(SelectedHat, inGame));
+			hatSelectionMenu.Change(SelectedHat => HatComponent.ReloadHat(SelectedHat, inGame, HatelineModule.Settings.CrownX, HatelineModule.Settings.CrownY));
 
 			if (inGame)
 			{
