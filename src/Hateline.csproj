@@ -1,19 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net452</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <AssemblyName>Hateline</AssemblyName>
         <RootNamespace>Celeste.Mod.Hateline</RootNamespace>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>11</LangVersion>
         <CelestePrefix Condition="'$(CelestePrefix)' == '' And Exists('..\..\Celeste.exe')">..\..</CelestePrefix>
         <CelestePrefix Condition="'$(CelestePrefix)' == '' And Exists('..\..\..\Celeste.exe')">..\..\..</CelestePrefix>
+        <CelestePrefix Condition="'$(CelestePrefix)' == '' And Exists('..\..\..\Celeste.dll')">..\..\..</CelestePrefix>
         <CelestePrefix Condition="'$(CelestePrefix)' == ''">lib-stripped</CelestePrefix>
-        <CelesteType Condition="'$(CelesteType)' == '' And Exists('$(CelestePrefix)\BuildIsXNA.txt')">XNA</CelesteType>
-        <CelesteType Condition="'$(CelesteType)' == ''">FNA</CelesteType>
-        <XNAPath Condition="'$(XNAPath)' == ''">$(WINDIR)\Microsoft.NET\assembly\GAC_32\{0}\v4.0_4.0.0.0__842cf8be1de50553\{0}.dll</XNAPath>
+
         <BaseOutputPath>bin\</BaseOutputPath>
         <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
     </PropertyGroup>
+
+    <Target Name="EnsureCelesteExists" BeforeTargets="PreBuildEvent">
+        <Error
+          Condition="!Exists('$(CelestePrefix)\Celeste.dll')"
+          Text="Cannot find Celeste. Make sure CelesteNet is cloned in your Celeste/Mods folder. Alternatively, copy Celeste.dll, FNA.dll and MMHOOK_Celeste.dll to a folder called 'lib-stripped' in the repository root." />
+    </Target>
 
     <!--Disable "Copy Local" for all references-->
     <ItemDefinitionGroup>
@@ -28,17 +33,13 @@
       <None Remove="Dialog\**" />
       <None Remove="Graphics\**" />
     </ItemGroup>
-    <ItemGroup>
-      <None Remove="everest.yaml" />
-      <None Remove="README.md" />
-    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="MonoMod.RuntimeDetour" Version="21.01.11.01" PrivateAssets="all" ExcludeAssets="runtime" />
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Include="$(CelestePrefix)\Celeste.exe">
+        <Reference Include="$(CelestePrefix)\Celeste.dll">
             <Private>false</Private>
         </Reference>
         <Reference Include="$(CelestePrefix)\MMHOOK_Celeste.dll">
@@ -51,42 +52,21 @@
           <HintPath>..\..\CelesteNet.Client\CelesteNet.Shared.dll</HintPath>
         </Reference>
         <Reference Include="Mono.Cecil">
-          <HintPath>..\..\Mono.Cecil.dll</HintPath>
+          <HintPath>$(CelestePrefix)\Mono.Cecil.dll</HintPath>
         </Reference>
         <Reference Include="MonoMod.RuntimeDetour">
-          <HintPath>..\..\MonoMod.RuntimeDetour.dll</HintPath>
+          <HintPath>$(CelestePrefix)\MonoMod.RuntimeDetour.dll</HintPath>
         </Reference>
         <Reference Include="MonoMod.Utils">
-          <HintPath>..\..\MonoMod.Utils.dll</HintPath>
+          <HintPath>$(CelestePrefix)\MonoMod.Utils.dll</HintPath>
         </Reference>
         <Reference Include="YamlDotNet">
-          <HintPath>..\..\..\YamlDotNet.dll</HintPath>
+          <HintPath>$(CelestePrefix)\YamlDotNet.dll</HintPath>
+        </Reference>
+        <Reference Include="$(CelestePrefix)\FNA.dll">
+            <Private>false</Private>
         </Reference>
     </ItemGroup>
-
-    <Choose>
-        <When Condition="'$(CelesteType)' == 'FNA'">
-            <ItemGroup>
-                <Reference Include="$(CelestePrefix)\FNA.dll">
-                    <Private>false</Private>
-                </Reference>
-            </ItemGroup>
-        </When>
-
-        <When Condition="'$(CelesteType)' == 'XNA'">
-            <ItemGroup>
-                <Reference Include="$([System.String]::Format('$(XNAPath)', 'Microsoft.Xna.Framework'))">
-                    <Private>false</Private>
-                </Reference>
-                <Reference Include="$([System.String]::Format('$(XNAPath)', 'Microsoft.Xna.Framework.Game'))">
-                    <Private>false</Private>
-                </Reference>
-                <Reference Include="$([System.String]::Format('$(XNAPath)', 'Microsoft.Xna.Framework.Graphics'))">
-                    <Private>false</Private>
-                </Reference>
-            </ItemGroup>
-        </When>
-    </Choose>
 
     <Target Name="CopyFiles" AfterTargets="Build">
         <Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="bin" />
