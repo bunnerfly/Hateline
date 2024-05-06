@@ -1,0 +1,20 @@
+mods.Hateline.name=Hateline
+
+# -- Triggers --
+
+# Hat Force Trigger
+triggers.Hateline/HatForceTrigger.placements.name.hat_force_trigger=Force Player Hat Trigger
+triggers.Hateline/HatForceTrigger.attributes.description.hat=What the hat you'd like to set should be. Everything after hateline_ in sprite id.
+triggers.Hateline/HatForceTrigger.attributes.description.hatX=The X position offset of the hat, default is 0
+triggers.Hateline/HatForceTrigger.attributes.description.hatY=The Y position offset of the hat, default is -7
+
+# Hat On Flag Trigger
+triggers.Hateline/HatOnFlagTrigger.placements.name.hat_on_flag_trigger=Force Player Hat on Flag
+triggers.Hateline/HatOnFlagTrigger.attributes.description.hat=What the hat you'd like to set should be. Everything after hateline_ in sprite id.
+triggers.Hateline/HatOnFlagTrigger.attributes.description.hatX=The X position offset of the hat, default is 0
+triggers.Hateline/HatOnFlagTrigger.attributes.description.hatY=The Y position offset of the hat, default is -7
+triggers.Hateline/HatOnFlagTrigger.attributes.description.inverted=Whether or not the condition should be inverted.
+triggers.Hateline/HatOnFlagTrigger.attributes.description.flag=The flag to check for.
+
+# Hat Reset Trigger
+triggers.Hateline/HatResetTrigger.placements.name.hat_reset_trigger=Reset Player Hat Trigger
