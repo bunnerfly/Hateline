@@ -1,5 +1,7 @@
-namespace Celeste.Mod.Hateline {
-    public class HatelineModuleSession : EverestModuleSession {
+namespace Celeste.Mod.Hateline
+{
+    public class HatelineModuleSession : EverestModuleSession
+    {
 
         public string MapForcedHat { get; set; } = null;
 

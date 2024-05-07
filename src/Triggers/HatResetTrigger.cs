@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Monocle;
+﻿using Celeste.Mod.Entities;
 using Microsoft.Xna.Framework;
-using Celeste.Mod.Entities;
 
 namespace Celeste.Mod.Hateline.Triggers
 {

@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Celeste;
-using Celeste.Mod;
-using Celeste.Mod.Hateline;
-
-using Celeste.Mod.CelesteNet;
+﻿using Celeste.Mod.CelesteNet;
 using Celeste.Mod.CelesteNet.DataTypes;
-using Monocle;
-using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.Hateline.CelesteNet
 {
