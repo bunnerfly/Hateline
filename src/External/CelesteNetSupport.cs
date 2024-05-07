@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Celeste.Mod.Hateline.CelesteNet
 {
-    public class CelesteNetSupport : IDisposable
+    public static class CelesteNetSupport
     {
         public const int PROTOCOL_VERSION = 1;
 
@@ -40,20 +39,6 @@ namespace Celeste.Mod.Hateline.CelesteNet
             orig(self);
             _hatComponent?.SendPlayerHat(HatelineModule.Settings.CrownX, HatelineModule.Settings.CrownY, HatelineModule.Settings.SelectedHat);
             // Console.WriteLine("Sending hat with info" + HatelineModule.Settings.CrownX + ", " + HatelineModule.Settings.CrownY + ", " + HatelineModule.Settings.SelectedHat);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (loaded)
-            {
-                Unload();
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

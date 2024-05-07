@@ -45,8 +45,6 @@ namespace Celeste.Mod.Hateline
 
             if (Everest.Modules.Any(m => m.Metadata.Name == "CelesteNet.Client"))
             {
-                CelesteNetSupport cnetSupport = new CelesteNetSupport();
-
                 CelesteNetSupport.Load();
             }
         }
