@@ -20,11 +20,7 @@ namespace Celeste.Mod.Hateline
 
         public string? SessionForcedHat => Settings.AllowMapChanges ? Session.MapForcedHat : null;
 
-        public SpriteBank SpriteBank;
-
         public static List<string> hats = new List<string>();
-
-        public static HatelineSettingsUI UI;
 
         public static string currentHat = "none";
 
@@ -33,7 +29,6 @@ namespace Celeste.Mod.Hateline
         public HatelineModule()
         {
             Instance = this;
-            UI = new HatelineSettingsUI();
         }
 
         public override void Load()
@@ -60,7 +55,7 @@ namespace Celeste.Mod.Hateline
         public override void CreateModMenuSection(TextMenu menu, bool inGame, EventInstance snapshot)
         {
             base.CreateModMenuSection(menu, inGame, snapshot);
-            UI.CreateMenu(menu, inGame);
+            HatelineSettingsUI.CreateMenu(menu, inGame);
         }
 
         private void LateLoader(On.Celeste.GameLoader.orig_LoadThread orig, GameLoader self)

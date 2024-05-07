@@ -4,31 +4,27 @@ using Monocle;
 
 namespace Celeste.Mod.Hateline
 {
-    public class HatelineSettingsUI
+    public static class HatelineSettingsUI
     {
-        public string SelectedHat;
-
-        public List<string> uiHats = new List<string>();
-
-        public void CreateMenu(TextMenu menu, bool inGame)
+        public static void CreateMenu(TextMenu menu, bool inGame)
         {
-            foreach (KeyValuePair<string, SpriteData> kvp in GFX.SpriteBank.SpriteData)
+            List<string> uiHats = new List<string>();
+
+            foreach (string sprite in GFX.SpriteBank.SpriteData.Select(kvp => kvp.Key))
             {
-                if (!kvp.Key.StartsWith("hateline_"))
-                {
+                if (!sprite.StartsWith("hateline_"))
                     continue;
-                }
-                if (kvp.Key.Replace("hateline_", "") != "none")
-                {
-                    uiHats.Add(kvp.Key.Replace("hateline_", ""));
-                    HatelineModule.hats = uiHats.Distinct().ToList();
-                }
+
+                string hatName = sprite.Replace("hateline_", "");
+                if (hatName != "none")
+                    uiHats.Add(hatName);
             }
+            HatelineModule.hats = uiHats.Distinct().ToList();
 
             HatSelector(menu, inGame);
         }
 
-        public void HatSelector(TextMenu menu, bool inGame)
+        public static void HatSelector(TextMenu menu, bool inGame)
         {
             var hatSelectionMenu = new TextMenu.Option<string>(Dialog.Clean("HATELINE_SETTINGS_CURHAT"));
 
@@ -36,7 +32,7 @@ namespace Celeste.Mod.Hateline
 
             foreach (string hat in HatelineModule.hats)
             {
-                bool selected = (hat == HatelineModule.Settings.SelectedHat);
+                bool selected = hat == HatelineModule.Settings.SelectedHat;
                 string name = Dialog.Clean("hateline_hat_" + hat);
                 name = (name == "") ? hat : name;
                 hatSelectionMenu.Add(name, hat, selected);
@@ -46,11 +42,7 @@ namespace Celeste.Mod.Hateline
 
             if (inGame)
             {
-
-                // hatSelectionMenu.AddDescription(menu, "You may have to die to reload hat");
-                // completely redundant now that i fixed the reload system!
-
-                Player player = (Engine.Scene)?.Tracker.GetEntity<Player>();
+                Player player = Engine.Scene?.Tracker.GetEntity<Player>();
                 if (player != null && player.StateMachine.State == Player.StIntroWakeUp)
                 {
                     hatSelectionMenu.Disabled = true;

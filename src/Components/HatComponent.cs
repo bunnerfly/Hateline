@@ -9,6 +9,9 @@ namespace Celeste.Mod.Hateline
     {
         public string crownSprite;
 
+        public PlayerHair hair => Entity.Get<PlayerHair>();
+        public PlayerSprite sprite => Entity.Get<PlayerSprite>();
+
         public HatComponent(string hatSprite, int crownX, int crownY) : base(null, null)
         {
             CreateHat(hatSprite);
@@ -27,32 +30,28 @@ namespace Celeste.Mod.Hateline
             else if (HatelineModule.Settings.Enabled)
             {
                 UpdatePosition(HatelineModule.Settings.CrownX, HatelineModule.Settings.CrownY);
-            } else {
+            }
+            else
+            {
                 return;
             }
-
-            var hair = Entity.Get<PlayerHair>();
-            var sprite = Entity.Get<PlayerSprite>();
 
             FlipX = hair.Facing == Facings.Left;
             FlipY = GravityHelperImports.IsActorInverted?.Invoke(Entity as Actor) ?? false;
             Visible = sprite.CurrentAnimationID != "dreamDashIn" && sprite.CurrentAnimationID != "dreamDashLoop";
-
         }
 
-        public void UpdatePosition(float? x = null, float? y = null) {
+        public void UpdatePosition(float? x = null, float? y = null)
+        {
             float px = x ?? HatelineModule.Settings.CrownX;
             float py = y ?? HatelineModule.Settings.CrownY;
 
-            var hair = Entity.Get<PlayerHair>();
-            var sprite = Entity.Get<PlayerSprite>();
-
             bool flipped = GravityHelperImports.IsActorInverted?.Invoke(Entity as Actor) ?? false;
-            float scaleY = flipped ? -sprite.Scale.Y : sprite.Scale.Y;
-            float heightOffsetY = flipped ? Height : 0;
 
-            Position = new Vector2(px, py - heightOffsetY) + sprite.HairOffset * new Vector2((float)hair.Facing, 1) + new Vector2(0f, -2f);
-            Position.Y *= scaleY;
+            Position = new Vector2(px, py - (flipped ? Height : 0))
+                + sprite.HairOffset * new Vector2((float)hair.Facing, 1)
+                + new Vector2(0f, -2f);
+            Position.Y *= flipped ? -sprite.Scale.Y : sprite.Scale.Y;
         }
 
         public void CreateHat(string hatSprite)
@@ -62,7 +61,9 @@ namespace Celeste.Mod.Hateline
             {
                 GFX.SpriteBank.CreateOn(this, "hateline_" + hatSprite);
                 crownSprite = hatSprite;
-            } catch {
+            }
+            catch
+            {
                 GFX.SpriteBank.CreateOn(this, "hateline_none");
             }
             Position = new Vector2(0f, -13f);
@@ -70,8 +71,7 @@ namespace Celeste.Mod.Hateline
 
         public static void ReloadHat(string hat, bool inGame, int x, int y)
         {
-            HatelineModule.Settings.SelectedHat = hat;
-            HatelineModule.currentHat = hat;
+            HatelineModule.Settings.SelectedHat = HatelineModule.currentHat = hat;
 
             if (!inGame || !HatelineModule.Settings.Enabled)
                 return;
