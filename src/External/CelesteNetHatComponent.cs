@@ -1,17 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Celeste.Mod;
-using Celeste.Mod.Hateline;
-using Monocle;
+﻿using System;
 using System.Collections.Concurrent;
-using Celeste.Mod.CelesteNet.Client;
-using Celeste.Mod.CelesteNet.Client.Entities;
+using System.Linq;
 using System.Reflection;
 using Celeste.Mod.CelesteNet;
+using Celeste.Mod.CelesteNet.Client;
+using Celeste.Mod.CelesteNet.Client.Entities;
+using Microsoft.Xna.Framework;
+using Monocle;
 
 namespace Celeste.Mod.Hateline.CelesteNet
 {
@@ -78,7 +73,7 @@ namespace Celeste.Mod.Hateline.CelesteNet
             {
                 CrownX = _CrownX,
                 CrownY = _CrownY,
-                SelectedHat = _SelectedHat, 
+                SelectedHat = _SelectedHat,
                 Player = client.PlayerInfo,
             });
         }
