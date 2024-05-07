@@ -8,7 +8,6 @@ namespace Celeste.Mod.Hateline
     public class HatComponent : Sprite
     {
         public string crownSprite;
-        // protected virtual Facings PlayerFacing => (Entity as Player)?.Facing ?? Facings.Left;
 
         public HatComponent(string hatSprite, int crownX, int crownY) : base(null, null)
         {
@@ -19,157 +18,84 @@ namespace Celeste.Mod.Hateline
         {
             base.Update();
 
-            if (!HatelineModule.Settings.Enabled)
+            Visible = HatelineModule.Settings.Enabled;
+
+            if (HatelineModule.Instance.SessionForcedHat != null)
             {
-                Visible = false;
+                UpdatePosition(HatelineModule.Session.mapsetX, HatelineModule.Session.mapsetY);
             }
-            else
+            else if (HatelineModule.Settings.Enabled)
             {
-                Visible = true;
+                UpdatePosition(HatelineModule.Settings.CrownX, HatelineModule.Settings.CrownY);
+            } else {
+                return;
             }
 
             var hair = Entity.Get<PlayerHair>();
             var sprite = Entity.Get<PlayerSprite>();
-            var facing = hair.Facing;
+
+            FlipX = hair.Facing == Facings.Left;
+            FlipY = GravityHelperImports.IsActorInverted?.Invoke(Entity as Actor) ?? false;
+            Visible = sprite.CurrentAnimationID != "dreamDashIn" && sprite.CurrentAnimationID != "dreamDashLoop";
+
+        }
+
+        public void UpdatePosition(float? x = null, float? y = null) {
+            float px = x ?? HatelineModule.Settings.CrownX;
+            float py = y ?? HatelineModule.Settings.CrownY;
+
+            var hair = Entity.Get<PlayerHair>();
+            var sprite = Entity.Get<PlayerSprite>();
 
             bool flipped = GravityHelperImports.IsActorInverted?.Invoke(Entity as Actor) ?? false;
+            float scaleY = flipped ? -sprite.Scale.Y : sprite.Scale.Y;
+            float heightOffsetY = flipped ? Height : 0;
 
-            if (HatelineModule.Session.MapForcedHat != null && HatelineModule.Settings.AllowMapChanges)
-            {
-                if (flipped)
-                {
-                    Position = new Vector2(
-                        HatelineModule.Session.mapsetX,
-                        -HatelineModule.Session.mapsetY + Height * sprite.Scale.Y)
-                        + sprite.HairOffset * new Vector2((float)facing, -1f) + new Vector2(0f, 2f);
-                }
-                else
-                {
-                    Position = new Vector2(
-                        HatelineModule.Session.mapsetX,
-                        HatelineModule.Session.mapsetY * sprite.Scale.Y)
-                        + sprite.HairOffset * new Vector2((float)facing, 1f) + new Vector2(0f, -2f);
-                }
-                FlipX = facing == Facings.Left;
-                FlipY = flipped ? true : false;
-                Visible = sprite.CurrentAnimationID != "dreamDashIn" && sprite.CurrentAnimationID != "dreamDashLoop";
-            }
-            else
-            {
-                if (HatelineModule.Settings.Enabled)
-                {
-                    if (flipped)
-                    {
-                        Position = new Vector2(
-                            HatelineModule.Settings.CrownX,
-                            -HatelineModule.Settings.CrownY + Height * sprite.Scale.Y)
-                            + sprite.HairOffset * new Vector2((float)facing, -1f) + new Vector2(0f, 2f);
-                    }
-                    else
-                    {
-                        Position = new Vector2(
-                            HatelineModule.Settings.CrownX,
-                            HatelineModule.Settings.CrownY * sprite.Scale.Y)
-                            + sprite.HairOffset * new Vector2((float)facing, 1f) + new Vector2(0f, -2f);
-                    }
-                    FlipX = facing == Facings.Left;
-                    FlipY = flipped ? true : false;
-                    Visible = sprite.CurrentAnimationID != "dreamDashIn" && sprite.CurrentAnimationID != "dreamDashLoop";
-                }
-            }
+            Position = new Vector2(px, py - heightOffsetY) + sprite.HairOffset * new Vector2((float)hair.Facing, 1) + new Vector2(0f, -2f);
+            Position.Y *= scaleY;
         }
 
         public void CreateHat(string hatSprite)
         {
-            if (HatelineModule.Session.MapForcedHat == null)
+            hatSprite = HatelineModule.Instance.SessionForcedHat ?? hatSprite;
+            try
             {
-                try
-                {
-                    GFX.SpriteBank.CreateOn(this, "hateline_" + hatSprite);
-                    crownSprite = hatSprite;
-                }
-                catch
-                {
-                    GFX.SpriteBank.CreateOn(this, "hateline_none");
-                }
-            }
-            else
-            {
-                try
-                {
-                    GFX.SpriteBank.CreateOn(this, "hateline_" + HatelineModule.Session.MapForcedHat);
-                    crownSprite = hatSprite;
-                }
-                catch
-                {
-                    GFX.SpriteBank.CreateOn(this, "hateline_none");
-                }
+                GFX.SpriteBank.CreateOn(this, "hateline_" + hatSprite);
+                crownSprite = hatSprite;
+            } catch {
+                GFX.SpriteBank.CreateOn(this, "hateline_none");
             }
             Position = new Vector2(0f, -13f);
         }
 
-        // test
         public static void ReloadHat(string hat, bool inGame, int x, int y)
         {
-            if (inGame && HatelineModule.Settings.Enabled)
-            {
-                Sprite playerHatComponent = (Sprite)Engine.Scene.Tracker.GetComponents<HatComponent>().FirstOrDefault(c => c.Entity is Player);
-                Player player = Engine.Scene.Tracker.GetEntity<Player>();
-                PlayerHair hair = player.Get<PlayerHair>();
-                var facing = hair.Facing;
-
-                bool flipped = GravityHelperImports.IsActorInverted?.Invoke(player) ?? false;
-
-                if (HatelineModule.Session.MapForcedHat != null && HatelineModule.Settings.AllowMapChanges)
-                {
-                    try
-                    {
-                        if (flipped)
-                        {
-                            GFX.SpriteBank.CreateOn(playerHatComponent, "hateline_" + HatelineModule.Session.MapForcedHat).Position = new Vector2(
-                                x,
-                                -y + playerHatComponent.Height * player.Sprite.Scale.Y)
-                                + player.Sprite.HairOffset * new Vector2((float)facing, -1f) + new Vector2(0f, 2f);
-                        }
-                        else
-                        {
-                            GFX.SpriteBank.CreateOn(playerHatComponent, "hateline_" + HatelineModule.Session.MapForcedHat).Position = new Vector2(
-                                x,
-                                y * player.Sprite.Scale.Y)
-                                + player.Sprite.HairOffset * new Vector2((float)facing, 1f) + new Vector2(0f, -2f);
-                        }
-                    }
-                    catch
-                    {
-                        GFX.SpriteBank.CreateOn(playerHatComponent, "hateline_none").Position = new Vector2(
-                            x,
-                            y * player.Sprite.Scale.Y)
-                            + player.Sprite.HairOffset * new Vector2((float)facing, 1f) + new Vector2(0f, -2f);
-                    }
-                    HatelineModule.Session.mapsetX = x;
-                    HatelineModule.Session.mapsetY = y;
-                }
-                else
-                {
-                    if (flipped)
-                    {
-                        GFX.SpriteBank.CreateOn(playerHatComponent, "hateline_" + hat).Position = new Vector2(
-                            HatelineModule.Settings.CrownX,
-                            -HatelineModule.Settings.CrownY + playerHatComponent.Height * player.Sprite.Scale.Y)
-                            + player.Sprite.HairOffset * new Vector2((float)facing, -1f) + new Vector2(0f, 2f);
-                    }
-                    else
-                    {
-                        GFX.SpriteBank.CreateOn(playerHatComponent, "hateline_" + hat).Position = new Vector2(
-                            HatelineModule.Settings.CrownX,
-                            HatelineModule.Settings.CrownY * player.Sprite.Scale.Y)
-                            + player.Sprite.HairOffset * new Vector2((float)facing, 1f) + new Vector2(0f, -2f);
-                    }
-                }
-            }
-
             HatelineModule.Settings.SelectedHat = hat;
             HatelineModule.currentHat = hat;
+
+            if (!inGame || !HatelineModule.Settings.Enabled)
+                return;
+
+            HatComponent playerHatComponent = Engine.Scene.Tracker.GetComponents<HatComponent>().FirstOrDefault(c => c.Entity is Player) as HatComponent;
+
+            if (playerHatComponent == null)
+                return;
+
+            if (HatelineModule.Instance.SessionForcedHat != null)
+            {
+                hat = HatelineModule.Instance.SessionForcedHat;
+
+                HatelineModule.Session.mapsetX = x;
+                HatelineModule.Session.mapsetY = y;
+            }
+            else
+            {
+                x = HatelineModule.Settings.CrownX;
+                y = HatelineModule.Settings.CrownY;
+            }
+
+            playerHatComponent.CreateHat(hat);
+            playerHatComponent.UpdatePosition(x, y);
         }
     }
 }

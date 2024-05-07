@@ -18,6 +18,8 @@ namespace Celeste.Mod.Hateline
         public override Type SessionType => typeof(HatelineModuleSession);
         public static HatelineModuleSession Session => (HatelineModuleSession)Instance._Session;
 
+        public string? SessionForcedHat => Settings.AllowMapChanges ? Session.MapForcedHat : null;
+
         public SpriteBank SpriteBank;
 
         public static List<string> hats = new List<string>();
