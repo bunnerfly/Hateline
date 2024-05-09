@@ -30,16 +30,20 @@ namespace Celeste.Mod.Hateline
             if (Entity is Ghost ghost)
             {
                 UpdateForGhost(ghost);
-                return;
+            }
+            else
+            {
+                Visible = HatelineModule.Instance.ShouldShowHat;
+
+                if (!HatelineModule.Instance.ShouldShowHat)
+                    return;
+
+                SetPosition(HatelineModule.Instance.CurrentX, HatelineModule.Instance.CurrentY);
+                UpdatePosition();
             }
 
-            Visible = HatelineModule.Instance.ShouldShowHat;
-
-            if (!HatelineModule.Instance.ShouldShowHat)
+            if (Entity == null || playerSprite == null || playerHair == null)
                 return;
-
-            SetPosition(HatelineModule.Instance.CurrentX, HatelineModule.Instance.CurrentY);
-            UpdatePosition();
 
             FlipX = playerHair.Facing == Facings.Left;
             FlipY = GravityHelperImports.IsActorInverted?.Invoke(Entity as Actor) ?? false;
