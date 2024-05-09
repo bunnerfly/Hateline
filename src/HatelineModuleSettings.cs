@@ -14,6 +14,6 @@ namespace Celeste.Mod.Hateline
         public int CrownY { get; set; } = -8;
 
         [SettingIgnore]
-        public string SelectedHat { get; set; } = "none";
+        public string SelectedHat { get; set; } = HatelineModule.DEFAULT;
     }
 }

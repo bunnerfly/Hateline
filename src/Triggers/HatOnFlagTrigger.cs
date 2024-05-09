@@ -34,9 +34,7 @@ namespace Celeste.Mod.Hateline.Triggers
             if (flagVal && HatelineModule.Settings.AllowMapChanges && HatelineModule.Settings.Enabled)
             {
                 HatelineModule.Session.MapForcedHat = hat;
-
-                // FIXME: Should this be using HatelineModule.currentHat? Or this trigger's hat...
-                HatComponent.ReloadHat(HatelineModule.currentHat, true, hatX, hatY);
+                HatelineModule.ReloadHat(true, hatX, hatY);
             }
         }
 

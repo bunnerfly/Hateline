@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Monocle;
 
 namespace Celeste.Mod.Hateline.CelesteNet
 {
@@ -8,16 +9,18 @@ namespace Celeste.Mod.Hateline.CelesteNet
 
         public static bool loaded;
 
-        private static CelesteNetHatComponent _hatComponent;
+        private static CelesteNetHatComponent cnetComponent;
+
+        public static CelesteNetHatComponent CNetComponent => cnetComponent;
 
         public static void Load()
         {
             if (loaded) return;
             if (Everest.Modules.Any((EverestModule m) => m.Metadata.Name == "CelesteNet.Client"))
             {
-                Celeste.Instance.Components.Add(_hatComponent = new CelesteNetHatComponent(Celeste.Instance));
+                Celeste.Instance.Components.Add(cnetComponent = new CelesteNetHatComponent(Celeste.Instance));
                 loaded = true;
-                On.Celeste.Player.Update += Player_Update;
+                On.Celeste.Player.Added += OnPlayerAdded;
             }
         }
 
@@ -26,19 +29,21 @@ namespace Celeste.Mod.Hateline.CelesteNet
             if (!loaded) return;
             if (Everest.Modules.Any((EverestModule m) => m.Metadata.Name == "CelesteNet.Client"))
             {
-                Celeste.Instance.Components.Remove(_hatComponent);
-                _hatComponent.Dispose();
-                _hatComponent = null;
+                Celeste.Instance.Components.Remove(cnetComponent);
+                cnetComponent.Dispose();
+                cnetComponent = null;
                 loaded = false;
-                On.Celeste.Player.Update -= Player_Update;
+                On.Celeste.Player.Added -= OnPlayerAdded;
             }
         }
 
-        private static void Player_Update(On.Celeste.Player.orig_Update orig, Player self)
+        private static void OnPlayerAdded(On.Celeste.Player.orig_Added orig, Player self, Scene scene)
         {
-            orig(self);
-            _hatComponent?.SendPlayerHat(HatelineModule.Settings.CrownX, HatelineModule.Settings.CrownY, HatelineModule.Settings.SelectedHat);
-            // Console.WriteLine("Sending hat with info" + HatelineModule.Settings.CrownX + ", " + HatelineModule.Settings.CrownY + ", " + HatelineModule.Settings.SelectedHat);
+            orig(self, scene);
+
+            Logger.Log(LogLevel.Verbose, "Hateline", $"OnPlayerAdded: Calling SendPlayerHat of {cnetComponent}");
+
+            cnetComponent?.SendPlayerHat();
         }
     }
 }

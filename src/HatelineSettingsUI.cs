@@ -16,7 +16,7 @@ namespace Celeste.Mod.Hateline
                     continue;
 
                 string hatName = sprite.Replace("hateline_", "");
-                if (hatName != "none")
+                if (hatName != HatelineModule.DEFAULT)
                     uiHats.Add(hatName);
             }
             HatelineModule.hats = uiHats.Distinct().ToList();
@@ -38,7 +38,10 @@ namespace Celeste.Mod.Hateline
                 hatSelectionMenu.Add(name, hat, selected);
             }
 
-            hatSelectionMenu.Change(SelectedHat => HatComponent.ReloadHat(SelectedHat, inGame, HatelineModule.Settings.CrownX, HatelineModule.Settings.CrownY));
+            hatSelectionMenu.Change(SelectedHat => {
+                HatelineModule.Settings.SelectedHat = SelectedHat;
+                HatelineModule.ReloadHat(inGame, HatelineModule.Settings.CrownX, HatelineModule.Settings.CrownY);
+            });
 
             if (inGame)
             {
