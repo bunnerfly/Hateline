@@ -353,6 +353,8 @@ MigrationBackup/
 .idea
 
 # Testing and Unfinished Stuff
-Loenn/
 Maps/
 bin/
+
+HatelinePackage/
+Hateline.zip
