@@ -4,7 +4,8 @@ dotnet build src/Hateline.csproj -c Debug
 rm -rf HatelinePackage Hateline.zip
 mkdir HatelinePackage
 cp everest.yaml HatelinePackage/everest.yaml
-cp -r src/bin/Hateline.* HatelinePackage/bin
+mkdir HatelinePackage/bin
+cp -r bin/Hateline.* HatelinePackage/bin
 cp -r Dialog HatelinePackage
 cp -r Graphics HatelinePackage
 cp -r Loenn HatelinePackage

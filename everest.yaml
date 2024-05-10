@@ -1,6 +1,6 @@
 - Name: Hateline
   Version: 0.1.5
-  DLL: src/bin/Hateline.dll
+  DLL: bin/Hateline.dll
   Dependencies:
     - Name: EverestCore
       Version: 1.4465.0
