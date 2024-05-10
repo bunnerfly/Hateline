@@ -18,20 +18,21 @@ namespace Celeste.Mod.Hateline
         public override Type SessionType => typeof(HatelineModuleSession);
         public static HatelineModuleSession Session => (HatelineModuleSession)Instance._Session;
 
-        public SpriteBank SpriteBank;
+        public bool HasForcedHat => Settings.AllowMapChanges && Session?.MapForcedHat != null;
+
+        public bool ShouldShowHat => HasForcedHat || Settings.Enabled;
+        public string? CurrentHat => HasForcedHat ? Session.MapForcedHat : Settings.SelectedHat;
+
+        public int CurrentX => HasForcedHat ? Session.mapsetX : Settings.CrownX;
+        public int CurrentY => HasForcedHat ? Session.mapsetY : Settings.CrownY;
 
         public static List<string> hats = new List<string>();
 
-        public static HatelineSettingsUI UI;
-
-        public static string currentHat = "none";
-
-        public static readonly string DEFAULT = "none";
+        public const string DEFAULT = "none";
 
         public HatelineModule()
         {
             Instance = this;
-            UI = new HatelineSettingsUI();
         }
 
         public override void Load()
@@ -41,12 +42,8 @@ namespace Celeste.Mod.Hateline
             On.Celeste.Player.Added += hookPlayerAdded;
             On.Celeste.GameLoader.LoadThread += LateLoader;
 
-            currentHat = Settings.SelectedHat;
-
             if (Everest.Modules.Any(m => m.Metadata.Name == "CelesteNet.Client"))
             {
-                CelesteNetSupport cnetSupport = new CelesteNetSupport();
-
                 CelesteNetSupport.Load();
             }
         }
@@ -54,13 +51,13 @@ namespace Celeste.Mod.Hateline
         private void hookPlayerAdded(On.Celeste.Player.orig_Added orig, Player self, Scene scene)
         {
             orig.Invoke(self, scene);
-            self.Add(new HatComponent(currentHat, Settings.CrownX, Settings.CrownY));
+            self.Add(new HatComponent(Settings.SelectedHat));
         }
 
         public override void CreateModMenuSection(TextMenu menu, bool inGame, EventInstance snapshot)
         {
             base.CreateModMenuSection(menu, inGame, snapshot);
-            UI.CreateMenu(menu, inGame);
+            HatelineSettingsUI.CreateMenu(menu, inGame);
         }
 
         private void LateLoader(On.Celeste.GameLoader.orig_LoadThread orig, GameLoader self)
@@ -77,6 +74,37 @@ namespace Celeste.Mod.Hateline
             {
                 CelesteNetSupport.Unload();
             }
+        }
+
+        public static void ReloadHat(bool inGame, int x, int y)
+        {
+            string hat = Instance.CurrentHat;
+
+            if (!inGame || !Settings.Enabled)
+                return;
+
+            HatComponent playerHatComponent = Engine.Scene.Tracker.GetComponents<HatComponent>().FirstOrDefault(c => c.Entity is Player) as HatComponent;
+
+            if (playerHatComponent == null)
+                return;
+
+            if (Instance.HasForcedHat)
+            {
+                Session.mapsetX = x;
+                Session.mapsetY = y;
+            }
+            else
+            {
+                x = Settings.CrownX;
+                y = Settings.CrownY;
+            }
+
+            playerHatComponent.CreateHat(hat, true);
+            playerHatComponent.SetPosition(x, y);
+            playerHatComponent.UpdatePosition();
+
+            Logger.Log(LogLevel.Verbose, "Hateline", $"ReloadHat: Calling SendPlayerHat of {CelesteNetSupport.CNetComponent}");
+            CelesteNetSupport.CNetComponent?.SendPlayerHat();
         }
     }
 }

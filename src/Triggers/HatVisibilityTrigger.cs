@@ -27,8 +27,7 @@ namespace Celeste.Mod.Hateline.Triggers
                 HatelineModule.Settings.Enabled)
             {
                 HatelineModule.Session.MapForcedHat = hat;
-
-                HatComponent.ReloadHat(HatelineModule.currentHat, true, hatX, hatY);
+                HatelineModule.ReloadHat(true, hatX, hatY);
             }
         }
 

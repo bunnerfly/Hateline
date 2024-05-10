@@ -26,15 +26,15 @@ namespace Celeste.Mod.Hateline.Triggers
 
         public override void OnEnter(Player player)
         {
-            base.OnEnter(player);
-            if ((inverted && SceneAs<Level>().Session.GetFlag(flag) == false) || (!inverted && SceneAs<Level>().Session.GetFlag(flag) == true))
-            {
-                if (HatelineModule.Settings.AllowMapChanges && HatelineModule.Settings.Enabled)
-                {
-                    HatelineModule.Session.MapForcedHat = hat;
+            bool flagVal = SceneAs<Level>().Session.GetFlag(flag);
+            if (inverted)
+                flagVal = !flagVal;
 
-                    HatComponent.ReloadHat(HatelineModule.currentHat, true, hatX, hatY);
-                }
+            base.OnEnter(player);
+            if (flagVal && HatelineModule.Settings.AllowMapChanges && HatelineModule.Settings.Enabled)
+            {
+                HatelineModule.Session.MapForcedHat = hat;
+                HatelineModule.ReloadHat(true, hatX, hatY);
             }
         }
 

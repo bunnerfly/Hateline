@@ -3,7 +3,7 @@ using Celeste.Mod.CelesteNet.DataTypes;
 
 namespace Celeste.Mod.Hateline.CelesteNet
 {
-    internal class DataPlayerHat : DataType<DataPlayerHat>
+    public class DataPlayerHat : DataType<DataPlayerHat>
     {
         static DataPlayerHat()
         {
