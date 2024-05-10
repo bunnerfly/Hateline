@@ -27,9 +27,9 @@ namespace Celeste.Mod.Hateline
         {
             base.Update();
 
-            if (Entity is Ghost ghost)
+            if (CelesteNetSupport.loaded && Entity.GetType().FullName == "Celeste.Mod.CelesteNet.Client.Entities.Ghost")
             {
-                UpdateForGhost(ghost);
+                UpdateForGhost();
             }
             else
             {
@@ -50,9 +50,10 @@ namespace Celeste.Mod.Hateline
             Visible = playerSprite.CurrentAnimationID != "dreamDashIn" && playerSprite.CurrentAnimationID != "dreamDashLoop";
         }
 
-        public void UpdateForGhost(Ghost ghost)
+        public void UpdateForGhost()
         {
-            if (!(CelesteNetSupport.CNetComponent?.Client?.Data?.TryGetBoundRef(ghost.PlayerInfo, out DataPlayerHat hatData) ?? false))
+            Ghost ghost = Entity as Ghost;
+            if (ghost == null || !(CelesteNetSupport.CNetComponent?.Client?.Data?.TryGetBoundRef(ghost.PlayerInfo, out DataPlayerHat hatData) ?? false))
                 return;
 
             CreateHat(hatData.SelectedHat);
