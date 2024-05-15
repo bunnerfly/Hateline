@@ -53,7 +53,10 @@ namespace Celeste.Mod.Hateline
         public void UpdateForGhost()
         {
             Ghost ghost = Entity as Ghost;
-            if (ghost == null || !(CelesteNetSupport.CNetComponent?.Client?.Data?.TryGetBoundRef(ghost.PlayerInfo, out DataPlayerHat hatData) ?? false))
+            DataPlayerHat hatData = null;
+
+            CelesteNetSupport.CNetComponent?.Client?.Data?.TryGetBoundRef(ghost.PlayerInfo, out hatData);
+            if (ghost == null || hatData == null)
                 return;
 
             CreateHat(hatData.SelectedHat);

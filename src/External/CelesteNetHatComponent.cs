@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
 using Celeste.Mod.CelesteNet.Client;
@@ -14,8 +13,6 @@ namespace Celeste.Mod.Hateline.CelesteNet
         protected readonly CelesteNetClientModule _clientModule;
         private Delegate _initHook;
         private Delegate _disposeHook;
-
-        private ConcurrentQueue<Action> _updateQueue = new ConcurrentQueue<Action>();
 
         public CelesteNetClient Client => _clientModule.Context?.Client;
 
@@ -57,44 +54,45 @@ namespace Celeste.Mod.Hateline.CelesteNet
 
         public override void Update(GameTime gameTime)
         {
-            var queue = _updateQueue;
-            _updateQueue = new ConcurrentQueue<Action>();
-            foreach (var action in queue) action();
-
             base.Update(gameTime);
 
             if (Engine.Scene == null)
                 return;
 
+            string selHat;
+            HatComponent hatComp;
             foreach (Ghost ghost in Engine.Scene.Tracker.GetEntities<Ghost>())
             {
-                if (ghost.Get<HatComponent>() == null)
+                DataPlayerHat hatData = null;
+                CelesteNetSupport.CNetComponent?.Client?.Data?.TryGetBoundRef(ghost.PlayerInfo, out hatData);
+                selHat = hatData?.SelectedHat ?? HatelineModule.DEFAULT;
+                hatComp = ghost.Get<HatComponent>();
+
+                if (hatComp == null && selHat != HatelineModule.DEFAULT)
                 {
                     ghost.Add(new HatComponent());
+                } else if (hatComp != null && selHat == HatelineModule.DEFAULT)
+                {
+                    ghost.Remove(hatComp);
                 }
             }
         }
 
-        /*
-        public void Handle(CelesteNetConnection connection, DataPlayerHat data) => _updateQueue.Enqueue(() =>
-        {
-            var ghost = Engine.Scene?.Tracker
-                .GetEntities<Ghost>()
-                .FirstOrDefault(e => (e as Ghost).PlayerInfo.ID == data.Player.ID);
-            if (ghost == null) return;
-
-            ghost.Add(new HatComponent());
-        });*/
-
-        public void SendPlayerHat()
+        public void SendPlayerHat(string forceSend = null)
         {
             if (Client == null) return;
+            
+            if(!HatelineModule.Instance.ShouldShowHat && string.IsNullOrEmpty(forceSend)) return;
+
+            string hatToSend = HatelineModule.Instance.CurrentHat;
+            if (!string.IsNullOrEmpty(forceSend))
+                hatToSend = forceSend;
 
             Client.SendAndHandle(new DataPlayerHat
             {
                 CrownX = HatelineModule.Instance.CurrentX,
                 CrownY = HatelineModule.Instance.CurrentY,
-                SelectedHat = HatelineModule.Instance.CurrentHat,
+                SelectedHat = hatToSend,
                 Player = Client.PlayerInfo,
             });
         }
