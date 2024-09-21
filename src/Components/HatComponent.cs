@@ -45,7 +45,7 @@ namespace Celeste.Mod.Hateline
             if (Entity == null || playerSprite == null || playerHair == null)
                 return;
 
-            FlipX = playerHair.Facing == Facings.Left;
+            FlipX = !HatelineModule.Settings.DontFlip && playerHair.Facing == Facings.Left;
             FlipY = GravityHelperImports.IsActorInverted?.Invoke(Entity as Actor) ?? false;
             Visible = playerSprite.CurrentAnimationID != "dreamDashIn" && playerSprite.CurrentAnimationID != "dreamDashLoop";
         }

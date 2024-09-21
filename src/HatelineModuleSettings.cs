@@ -21,6 +21,7 @@ namespace Celeste.Mod.Hateline
         }
 
         public bool AllowMapChanges { get; set; } = true;
+        public bool DontFlip { get; set; } = false;
 
         [SettingRange(-100, 100, false)]
         public int CrownX { get; set; } = 0;
