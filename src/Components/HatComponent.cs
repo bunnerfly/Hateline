@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Monocle;
 
 namespace Celeste.Mod.Hateline;
-
+    
 [Tracked(true)]
 public class HatComponent : Sprite
 {
