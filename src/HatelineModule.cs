@@ -66,6 +66,8 @@ public class HatelineModule : EverestModule
     public override void Load()
     {
         typeof(GravityHelperImports).ModInterop();
+        typeof(MotionSmoothingImports).ModInterop();
+
         On.Celeste.Player.Added += HookPlayerAdded;
         On.Celeste.Level.LoadLevel += HookLoadLevel;
         On.Celeste.Player.ResetSprite += HookPlayerResetSprite;
@@ -111,7 +113,12 @@ public class HatelineModule : EverestModule
     public static void ResetHat(Player self)
     {
         self.Get<HatComponent>()?.RemoveSelf();
-        self.Add(new HatComponent(Instance.CurrentHat, Instance.CurrentX, Instance.CurrentY));
+        
+        HatComponent hat = new(Instance.CurrentHat, Instance.CurrentX, Instance.CurrentY);
+        self.Add(hat);
+
+        // Keep the hat glued to Madeline when MotionSmoothing is active.
+        MotionSmoothingImports.TieToPlayer?.Invoke(hat);
     }
     
     public static void ReloadHat()
